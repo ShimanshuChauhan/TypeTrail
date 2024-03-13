@@ -82,7 +82,8 @@ body {
     overflow: hidden;
 }
 
-h1 {
+h1,
+span {
     @apply text-3xl;
 }
 

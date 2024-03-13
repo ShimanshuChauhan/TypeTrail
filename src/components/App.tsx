@@ -1,4 +1,14 @@
 import { useEffect, useReducer } from 'react'
+import Header from './Header'
+import ParagraphChange from './ParagraphChange'
+import HighScore from './HighScore'
+import About from './About'
+import Login from './Login'
+import Main from './Main'
+import Paragraph from './Paragraph'
+import TypingStats from './TypingStats'
+import Timer from './Timer'
+import Footer from './Footer'
 
 type Question = { id: number; question: string }
 
@@ -12,7 +22,16 @@ type Action = {
     payload?: any
 }
 
-const initialState: State = { question: [], status: 'loading' }
+const initialState: State = {
+    question: [
+        {
+            id: 1,
+            question:
+                "In the heart of the forest, where sunlight filters through the canopy in dappled patterns, I find solace. The rustle of leaves in the breeze and the chirping of birds create a symphony of nature's song. Each step I take feels like a journey into the depths of my own being.",
+        },
+    ],
+    status: 'loading',
+}
 
 function reducer(state: State, action: Action): State {
     switch (action.type) {
@@ -43,38 +62,27 @@ function App(): JSX.Element {
             .catch((err) => dispatch({ type: 'error', payload: err }))
     }, [])
     return (
-        <div className="flex flex-col items-center justify-evenly h-[100vh] m-6">
-            <header className=" p-5 bg-blue-300 flex items-center h-[10vh]">
-                <p>logo</p>
-                <button>To change para</button>
-                <button>highscore</button>
-                <button>about</button>
-                <button>login form</button>
-            </header>
-            <main className="flex flex-col space-y-10 items-center justify-center bg-green-400 h-[70vh] p-5">
+        <div className="flex flex-col items-center justify-evenly h-[100vh] w-[80vw] m-auto">
+            <Header>
+                <ParagraphChange />
+                <HighScore />
+                <About />
                 <div className="flex flex-1"></div>
-                <div>
-                    <h1>
-                        In the heart of the forest, where sunlight filters
-                        through the canopy in dappled patterns, I find solace.
-                        The rustle of leaves in the breeze and the chirping of
-                        birds create a symphony of nature's song. Each step I
-                        take feels like a journey into the depths of my own
-                        being.
-                    </h1>
-                </div>
+                <Login />
+            </Header>
+            <Main>
                 <div className="flex flex-1"></div>
-                <div className="flex bg-amber-500 p-5">
-                    <p>Timer</p>
+                <Paragraph question={question[0].question} />
+                <div className="flex flex-1"></div>
+                <TypingStats>
+                    <Timer />
                     <p>Mistakes</p>
                     <p>WPM</p>
                     <p>CPM</p>
                     <button>Try again</button>
-                </div>
-            </main>
-            <footer className="flex items-center bg-red-500 p-5">
-                Tab + enter - restart test
-            </footer>
+                </TypingStats>
+            </Main>
+            <Footer>Tab + enter - restart test</Footer>
         </div>
     )
 }
