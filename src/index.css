@@ -70,6 +70,9 @@
     * {
         @apply border-border;
     }
+    html {
+        font-family: 'Roboto Mono', 'Roboto Mono', Vazirmatn, monospace;
+    }
     body {
         @apply bg-background text-foreground;
     }

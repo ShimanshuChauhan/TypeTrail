@@ -9,12 +9,15 @@ import Paragraph from './Paragraph'
 import TypingStats from './TypingStats'
 import Timer from './Timer'
 import Footer from './Footer'
+import Loader from './Loader'
+import Error from './Error'
 
 type Question = { id: number; question: string }
 
 type State = {
-    question: Question[]
-    status: 'loading' | 'ready' | 'error'
+    questions: Question[]
+    status: 'loading' | 'ready' | 'error' | 'active'
+    index: number
 }
 
 type Action = {
@@ -23,14 +26,9 @@ type Action = {
 }
 
 const initialState: State = {
-    question: [
-        {
-            id: 1,
-            question:
-                "In the heart of the forest, where sunlight filters through the canopy in dappled patterns, I find solace. The rustle of leaves in the breeze and the chirping of birds create a symphony of nature's song. Each step I take feels like a journey into the depths of my own being.",
-        },
-    ],
+    questions: [],
     status: 'loading',
+    index: 0,
 }
 
 function reducer(state: State, action: Action): State {
@@ -38,8 +36,8 @@ function reducer(state: State, action: Action): State {
         case 'dataReceived':
             return {
                 ...state,
-                question: action.payload,
-                status: 'ready',
+                questions: action.payload,
+                status: 'active', // change to 'ready' to see the start screen
             }
         case 'dataFailed':
             return {
@@ -54,13 +52,18 @@ function reducer(state: State, action: Action): State {
 }
 
 function App(): JSX.Element {
-    const [{ question, status }, dispatch] = useReducer(reducer, initialState)
+    const [{ questions, status, index }, dispatch] = useReducer(
+        reducer,
+        initialState
+    )
+
     useEffect(function () {
         fetch('http://localhost:9000/questions')
             .then((res) => res.json())
             .then((data) => dispatch({ type: 'dataReceived', payload: data }))
             .catch((err) => dispatch({ type: 'error', payload: err }))
     }, [])
+
     return (
         <div className="flex flex-col items-center justify-evenly h-[100vh] w-[80vw] m-auto">
             <Header>
@@ -71,16 +74,20 @@ function App(): JSX.Element {
                 <Login />
             </Header>
             <Main>
+                {status === 'loading' && <Loader />}
+                {status === 'error' && <Error />}
                 <div className="flex flex-1"></div>
-                <Paragraph question={question[0].question} />
+                <Paragraph question={questions[0]?.question} status={status} />
                 <div className="flex flex-1"></div>
-                <TypingStats>
-                    <Timer />
-                    <p>Mistakes</p>
-                    <p>WPM</p>
-                    <p>CPM</p>
-                    <button>Try again</button>
-                </TypingStats>
+                {status === 'active' && (
+                    <TypingStats>
+                        <Timer />
+                        <p>Mistakes</p>
+                        <p>WPM</p>
+                        <p>CPM</p>
+                        <button>Try again</button>
+                    </TypingStats>
+                )}
             </Main>
             <Footer>Tab + enter - restart test</Footer>
         </div>
