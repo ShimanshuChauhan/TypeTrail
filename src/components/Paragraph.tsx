@@ -1,15 +1,25 @@
+type Action = {
+    type: string
+    payload?: any
+}
+
+type Dispatch = (action: Action) => void
+
 function Paragraph({
     question,
     status,
+    dispatch,
 }: {
     question: string
     status: string
+    dispatch: Dispatch
 }): JSX.Element {
     const lettersArray = question?.split('')
     return (
         <>
             <div
-                className={`bg-[#323437] ${status === 'ready' ? 'blur-md' : ''}`}
+                className={`bg-[#323437] ${status === 'ready' ? 'cursor-default blur-md' : ''}`}
+                onClick={() => dispatch({ type: 'start' })}
             >
                 <div className="leading-10">
                     {lettersArray?.map((letter, index) => {

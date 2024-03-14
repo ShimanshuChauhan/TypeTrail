@@ -37,12 +37,22 @@ function reducer(state: State, action: Action): State {
             return {
                 ...state,
                 questions: action.payload,
-                status: 'active', // change to 'ready' to see the start screen
+                status: 'ready', // change to 'ready' to see the start screen
             }
         case 'dataFailed':
             return {
                 ...state,
                 status: 'error',
+            }
+        case 'start':
+            return {
+                ...state,
+                status: 'active',
+            }
+        case 'changeQuestion':
+            return {
+                ...state,
+                index: Math.floor(Math.random() * state.questions.length),
             }
         default:
             return {
@@ -67,7 +77,7 @@ function App(): JSX.Element {
     return (
         <div className="flex flex-col items-center justify-evenly h-[100vh] w-[80vw] m-auto">
             <Header>
-                <ParagraphChange />
+                <ParagraphChange dispatch={dispatch} />
                 <HighScore />
                 <About />
                 <div className="flex flex-1"></div>
@@ -77,7 +87,11 @@ function App(): JSX.Element {
                 {status === 'loading' && <Loader />}
                 {status === 'error' && <Error />}
                 <div className="flex flex-1"></div>
-                <Paragraph question={questions[0]?.question} status={status} />
+                <Paragraph
+                    question={questions[index]?.question}
+                    status={status}
+                    dispatch={dispatch}
+                />
                 <div className="flex flex-1"></div>
                 {status === 'active' && (
                     <TypingStats>
